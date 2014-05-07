@@ -1,0 +1,11 @@
+﻿<tr data-bind="click: $parent.getItem">
+    <td>
+        <input type="checkbox" disabled="disabled" data-bind='checked: isFlintstone' />
+    </td>
+    <td data-bind="text: firstName"></td>
+    <td data-bind="text: lastName"></td>
+    <td data-bind="text: currentAge"></td>
+    <td>
+        <input type="button" value="X" data-bind='click: $parent.deleteItem' />
+    </td>
+</tr>

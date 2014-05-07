@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Simple Knockout Example</title>
+    <style>
+        body
+        {
+            font-family: arial;
+            font-size: 14px;
+        }
+
+        .sectionHeader
+        {
+            margin: 0.5em;
+        }
+
+        .personList
+        {
+            border: 1px solid black;
+            width: 900px;
+        }
+
+            .personList table
+            {
+                background-color: skyblue;
+                width: 100%;
+                text-align: left;
+            }
+
+        .editPerson
+        {
+            border: 1px solid black;
+            width: 900px;
+            margin-top: -1px;
+        }
+
+            .editPerson form
+            {
+                background-color: skyblue;
+                width: 100%;
+            }
+
+        th
+        {
+            background-color: #87CEEB;
+        }
+
+        tr:nth-child(odd)
+        {
+            background-color: #87AECB;
+        }
+
+        tr:nth-child(even)
+        {
+            background-color: #87CEEB;
+        }
+
+        tr:hover
+        {
+            background-color: #A7DEFB;
+        }
+
+        .inputValue
+        {
+            margin-right: 4em;
+        }
+
+        .inputPrompt
+        {
+            padding-left: 2px;
+        }
+
+        td
+        {
+            max-width: 300px;
+        }
+    </style>
+    <script type="text/javascript" src="../Scripts/jquery-2.0.0.js"></script>
+    <script type="text/javascript" src="../Scripts/knockout-2.2.1.js"></script>
+    <script type="text/javascript" src="../Scripts/knockout.mapping-latest.js"></script>
+    <script type="text/javascript" src="../Scripts/TrafficCop.js"></script>
+    <script type="text/javascript" src="../Scripts/infuser.js"></script>
+    <script type="text/javascript" src="../Scripts/koExternalTemplateEngine.js"></script>
+
+
+</head>
+<body>
+    <div id="contactList">
+        <div class="personList" data-bind="template: 'PersonGridList'"></div>
+        <div class="editPerson" data-bind="template: 'EditPersonForm'"></div>
+    </div>
+
+<!--    Test to create new items some bound to new, some to existing - uncomment to use
+    <br />
+    <br />
+    <br />
+    <div id="contactsOnly">
+        <div class="personList" data-bind="template: 'ContactList'"></div>
+        <div class="editPerson" data-bind="template: 'EditPerson'"></div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div id="contactsOnlyList" class="personList" data-bind="template: 'ContactList'"></div>-->
+
+    <script>
+        $(document).ready(function ()
+        {
+            // Set up template library
+            infuser.defaults.templateUrl = "Templates";
+            infuser.defaults.templateSuffix = ".html";
+            infuser.defaults.ajax.cache = false;
+
+            // Simple person view model
+            var personViewModel = function (isNewItem)
+            {
+                var isNew = ko.observable(isNewItem === false ? false : true);
+                var firstName = ko.observable('');
+                var lastName = ko.observable('');
+                var isFlintstone = ko.observable(false);
+                var currentAge = ko.observable(0);
+
+                var validate = function ()
+                {
+                    if (this.firstName().length < 1 || this.lastName().length < 1 || +this.currentAge() < 1 || +this.currentAge() > 150)
+                    {
+                        return false;
+                    }
+                    return true;
+                };
+
+                var operationName = function ()
+                {
+                    if (this.isNew())
+                    {
+                        return 'Add';
+                    }
+                    return 'Update';
+                };
+
+                return {
+                    firstName: firstName,
+                    lastName: lastName,
+                    isFlintstone: isFlintstone,
+                    currentAge: currentAge,
+                    validate: validate,
+                    operationName: operationName,
+                    isNew: isNew
+                };
+            };
+
+            // List of people view model
+            var contactListModel = function (peopleToAdd)
+            {
+
+                // All people to collection
+                var people = ko.observableArray(peopleToAdd);
+                var editViewPerson = ko.observable(new personViewModel(true));
+                var personEdit;
+
+                // Save item either as new to collection or update to collection from edit view 
+                var saveItem = function ()
+                {
+                    if (editViewPerson().validate())
+                    {
+                        if (personEdit != null)
+                        {
+                            var jsEditObject = ko.mapping.toJS(editViewPerson);
+                            ko.mapping.fromJS(jsEditObject, {}, personEdit);
+                            personEdit = null;
+                        } else
+                        {
+                            editViewPerson().isNew(false);
+                            people.push(editViewPerson());
+                        }
+                    }
+                    editViewPerson(new personViewModel(true));
+                };
+
+                // Get item from collection into edit view
+                var getItem = function (personClicked)
+                {
+                    personEdit = personClicked;
+                    var jsEditObject = ko.mapping.toJS(personClicked);
+                    var koEditObject = new personViewModel(false);
+                    ko.mapping.fromJS(jsEditObject, {}, koEditObject);
+                    editViewPerson(koEditObject);
+                };
+
+                // Delete item from collection. If item in edit view clear this too
+                var deleteItem = function (personClicked)
+                {
+                    people.remove(personClicked);
+                    if (personEdit === personClicked)
+                    {
+                        editViewPerson(new personViewModel(true));
+                        personEdit = null;
+                    }
+                };
+
+                // Cancel item edit
+                var cancelItem = function ()
+                {
+                    editViewPerson(new personViewModel(true));
+                    personEdit = null;
+                };
+
+                return {
+                    people: people,
+                    editViewPerson: editViewPerson,
+                    saveItem: saveItem,
+                    getItem: getItem,
+                    deleteItem: deleteItem,
+                    cancelItem: cancelItem
+                };
+            };
+
+            // Create some initial data to populate VM with a construct VM
+            var person1 = new personViewModel(false);
+            person1.firstName('Fred');
+            person1.lastName('Flintstone');
+            person1.isFlintstone(true);
+            person1.currentAge(33);
+            var person2 = new personViewModel(false);
+            person2.firstName('Barnie');
+            person2.lastName('Rubble');
+            person2.isFlintstone(false);
+            person2.currentAge(29);
+            var contactViewModel1 = new contactListModel([person1, person2]);
+
+            // Bind VM to html element
+            ko.applyBindings(contactViewModel1, document.getElementById('contactList'));
+
+            // Test to create new items some bound to new, some to existing - uncomment to use
+            //var person3 = new personViewModel(false);
+            //person3.firstName('Wilma');
+            //person3.lastName('Flintstone');
+            //person3.isFlintstone(true);
+            //person3.currentAge(33);
+            //var person4 = new personViewModel(false);
+            //person4.firstName('Betty');
+            //person4.lastName('Rubble');
+            //person4.isFlintstone(false);
+            //person4.currentAge(29);
+            //var contactViewModel2 = new contactListModel([person3, person4]);
+
+            //// Bind VM to html element
+            //ko.applyBindings(contactViewModel2, document.getElementById('contactsOnly'));
+            //ko.applyBindings(contactViewModel2, document.getElementById('contactsOnlyList'));
+        });
+    </script>
+</body>
+</html>

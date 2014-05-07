@@ -1,0 +1,12 @@
+﻿<p class="sectionHeader" data-bind="text: editViewPerson().operationName() + ' Contact:'"></p>
+<form data-bind="with: editViewPerson, submit: saveItem">
+    <label class="inputPrompt" for="fname">Name:</label>
+    <input id="fname" type="text" data-bind='value: firstName, valueUpdate: "afterkeydown"' />
+    <input id="lname" type="text" class="inputValue" data-bind='value: lastName, valueUpdate: "afterkeydown"' />
+    <label class="inputPrompt" for="isFlintstone">Flintstone?</label>
+    <input id="isflinstone" class="inputValue" type="checkbox" data-bind='checked: isFlintstone' />
+    <label class="inputPrompt" for="age">Age:</label>
+    <input id="age" type="text" data-bind='value: currentAge, valueUpdate: "afterkeydown"' />
+    <button type="submit" data-bind="enable: validate(), text: operationName()"></button>
+    <button type="button" data-bind="visible: !isNew(), click: $parent.cancelItem">Cancel</button>
+</form>
