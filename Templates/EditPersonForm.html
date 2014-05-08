@@ -7,6 +7,6 @@
     <input id="isflinstone" class="inputValue" type="checkbox" data-bind='checked: isFlintstone' />
     <label class="inputPrompt" for="age">Age:</label>
     <input id="age" type="text" data-bind='value: currentAge, valueUpdate: "afterkeydown"' />
-    <button type="submit" data-bind="enable: validate(), text: operationName()"></button>
-    <button type="button" data-bind="visible: !isNew(), click: $parent.cancelItem">Cancel</button>
+    <button id="addbtn" type="submit" data-bind="enable: validate(), text: operationName()"></button>
+    <button id="cancelbtn" type="button" data-bind="visible: !isNew(), click: $parent.cancelItem">Cancel</button>
 </form>
