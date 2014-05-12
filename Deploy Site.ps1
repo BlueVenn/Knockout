@@ -13,32 +13,34 @@ if (!(Test-Path -Path $workDir))
 	exit
 }
 
-$scriptsDir = [System.IO.Path]::Combine($workDir, "Scripts")
+$siteDir = [System.IO.Path]::Combine($workDir, "Site")
+
+$scriptsDir = [System.IO.Path]::Combine($siteDir, "Scripts")
 Add-Content -Path $logFile -Value "Scripts Dir = $scriptsDir"
 if (!(Test-Path -Path $scriptsDir))
 {
-	Add-Content -Path $logFile -Value "Working Dir not found"
+	Add-Content -Path $logFile -Value "Scripts Dir not found"
 	exit
 }
 
-$templatesDir = [System.IO.Path]::Combine($workDir, "Templates")
+$templatesDir = [System.IO.Path]::Combine($siteDir, "Templates")
 Add-Content -Path $logFile -Value "Templates Dir = $templatesDir"
 if (!(Test-Path -Path $templatesDir))
 {
-	Add-Content -Path $logFile -Value "Working Dir not found"
+	Add-Content -Path $logFile -Value "Templates Dir not found"
 	exit
 }
 
-$knockFile = [System.IO.Path]::Combine($workDir, "knockout.html")
+$knockFile = [System.IO.Path]::Combine($siteDir, "knockout.html")
 Add-Content -Path $logFile -Value "knockout file = $knockFile"
 if (!(Test-Path -Path $knockFile))
 {
-	Add-Content -Path $logFile -Value "Working Dir not found"
+	Add-Content -Path $logFile -Value "knockout file not found"
 	exit
 }
 
 $targetDir = "\\JB-2012R2-TEST\C$"
-$targetDir = [System.IO.Path]::Combine($targetDir, "Dev")
+$targetDir = [System.IO.Path]::Combine($targetDir, "Websites")
 $targetDir = [System.IO.Path]::Combine($targetDir, "Knockout")
 if (!(Test-Path -Path $targetDir))
 {
