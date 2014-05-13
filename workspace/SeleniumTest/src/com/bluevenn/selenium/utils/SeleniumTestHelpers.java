@@ -1,23 +1,42 @@
 package com.bluevenn.selenium.utils; 
 
+import java.net.URL;
+
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.WebDriver;
 
 public class SeleniumTestHelpers 
 {
 	// Get base URL of the application
-	public static String getBaseUrl(){ return "http://localhost/knockout/knockout.html"; }
+	public static String getBaseUrl()
+	{
+		// Get server name
+		String serverName = getSeleniumConfiguration().getServerName();
+		return String.format( "http://%1$s/knockout/knockout.html" , serverName);
+	}
 	
-	// Get the current active web driver
-	private static WebDriver m_WebDriver;
+	// Get the selenium configuration settings
+	private static SeleniumConfiguration seleniumConfiguration;
+	public static SeleniumConfiguration getSeleniumConfiguration() 
+	{
+		// If not set up do so now
+		if( seleniumConfiguration == null )
+		{
+			seleniumConfiguration = new SeleniumConfiguration();
+		}		
+		return seleniumConfiguration;
+	}
+			
+	// Get the current active web driver	
+	private static WebDriver webDriver;
 	public static WebDriver getWebDriver() 
 	{
 		// If not set up do so now
-		if( m_WebDriver == null )
+		if( webDriver == null )
 		{
-			m_WebDriver = new ChromeDriver();
+			webDriver = new ChromeDriver();
 		}		
-		return m_WebDriver;
+		return webDriver;
 	}
 	
 	// Connect to the root application URL
@@ -31,20 +50,46 @@ public class SeleniumTestHelpers
 	// Close down and reset any existing driver
 	public static void resetDriver()
 	{
-		if( m_WebDriver != null )
+		if( webDriver != null )
 		{
 			try
 			{
-				m_WebDriver.quit();
+				webDriver.quit();
 			}
 			catch( Exception ex )
 			{
 				// Don't care just trying to clear down 
 			}
-			m_WebDriver = null;			
+			webDriver = null;			
 		}
 		
 		// Now we have fully cleared down restart
 		getWebDriver();
 	}
+	
+	// Get a path for a class
+    public static String whereFrom(Object o) 
+    {
+	  if ( o == null ) 
+	  {
+	    return null;
+	  }
+	  Class<?> c = o.getClass();
+	  ClassLoader loader = c.getClassLoader();
+	  if ( loader == null ) {
+	    // Try the bootstrap loader - obtained from the System Class Loader.
+	    loader = ClassLoader.getSystemClassLoader();
+	    while ( loader != null && loader.getParent() != null ) {
+	      loader = loader.getParent();
+	    }
+	  }
+	  if (loader != null) {
+	    String name = c.getCanonicalName();
+	    URL resource = loader.getResource(name.replace(".", "/") + ".class");
+	    if ( resource != null ) {
+	      return resource.toString();
+	    }
+	  }
+	  return "Unknown";
+   	}    	
 }

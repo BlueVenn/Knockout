@@ -88,14 +88,6 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="EditPersonViewTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="com.bluevenn.test.knockout.EditPersonViewTest" todir="${junit.output.dir}"/>
-            <classpath refid="SeleniumTest.classpath"/>
-        </junit>
-    </target>
     <target name="SeleniumTest">
         <java classname="SeleniumTest" failonerror="true" fork="yes">
             <classpath refid="SeleniumTest.classpath"/>
