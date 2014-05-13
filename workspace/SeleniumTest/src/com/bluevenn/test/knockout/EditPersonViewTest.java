@@ -32,7 +32,7 @@ public class EditPersonViewTest extends SeleneseTestBase
 		editPage.setText( "first name", "Fred" );
 		editPage.setText( "last name", "Bloggs" );
 		editPage.setText( "age", "32" );
-		Assert.assertThat( editPage.getEnabled( "save button" ), Matchers.equalTo(true) );
+		Assert.assertThat( editPage.getEnabled( "save button" ), Matchers.equalTo(false) );
 	}
 	
 	@Test
